@@ -55,6 +55,7 @@ var (
 	serveRepoFlag   string
 	serveBranchFlag string
 	serveDocsFlag   string
+	serveWebFlag    string
 )
 
 func init() {
@@ -75,6 +76,7 @@ func init() {
 	serveCmd.Flags().StringVar(&serveRepoFlag, "repo", "", "Repository URL for source links")
 	serveCmd.Flags().StringVar(&serveBranchFlag, "branch", "main", "Git branch for source links")
 	serveCmd.Flags().StringVar(&serveDocsFlag, "docs", "", "Documentation base URL")
+	serveCmd.Flags().StringVar(&serveWebFlag, "web", "", "Web directory to serve static files from")
 }
 
 var versionCmd = &cobra.Command{
@@ -187,11 +189,27 @@ func runServe(cmd *cobra.Command, args []string) error {
 		_, _ = w.Write([]byte("ok"))
 	})
 
+	// Serve static files from web directory if specified
+	if serveWebFlag != "" {
+		webDir, err := filepath.Abs(serveWebFlag)
+		if err != nil {
+			return fmt.Errorf("resolving web path: %w", err)
+		}
+		if _, err := os.Stat(webDir); os.IsNotExist(err) {
+			return fmt.Errorf("web directory not found: %s", webDir)
+		}
+		fs := http.FileServer(http.Dir(webDir))
+		http.Handle("/", fs)
+	}
+
 	addr := fmt.Sprintf(":%d", servePortFlag)
 	fmt.Printf("Starting server at http://localhost%s\n", addr)
 	fmt.Printf("  Schema:      http://localhost%s/api/schema.json\n", addr)
 	fmt.Printf("  JSON Schema: http://localhost%s/api/jsonschema\n", addr)
 	fmt.Printf("  Health:      http://localhost%s/health\n", addr)
+	if serveWebFlag != "" {
+		fmt.Printf("  Web UI:      http://localhost%s/example.html\n", addr)
+	}
 	fmt.Printf("\nServing schema from: %s\n", absDir)
 	fmt.Println("Press Ctrl+C to stop")
 
