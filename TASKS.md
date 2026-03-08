@@ -66,19 +66,19 @@ Export parsed schema to JSON:
 - [x] Add unit tests for export package
 
 ### 1.5 Cytoscape.js Renderer (TypeScript/NPM)
-**Status**: Not Started
+**Status**: Complete
 
 NPM module for rendering:
 
-- [ ] Set up TypeScript project
-- [ ] Install Cytoscape.js and dagre layout
-- [ ] Define TypeScript types matching JSON schema
-- [ ] Create `entscape.render(container, schema, options)` function
-- [ ] Implement dagre layout for ER diagrams
-- [ ] Style nodes as entity boxes with field lists
-- [ ] Style edges with relation labels (1:1, 1:N, M:N)
-- [ ] Add click handlers to open source links
-- [ ] Export as ES module and UMD
+- [x] Set up TypeScript project
+- [x] Install Cytoscape.js and dagre layout
+- [x] Define TypeScript types matching JSON schema
+- [x] Create `entscape.render(container, schema, options)` function
+- [x] Implement dagre layout for ER diagrams
+- [x] Style nodes as entity boxes with field lists
+- [x] Style edges with relation labels (1:1, 1:N, M:N)
+- [x] Add click handlers to open source links
+- [x] Export as ES module and UMD
 - [ ] Publish to NPM (`@grokify/entscape`)
 
 ### 1.6 CLI Integration
