@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entscape - ERD Visualization</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+    }
+    header {
+      background: #212529;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    header .subtitle {
+      color: #adb5bd;
+      font-size: 0.875rem;
+    }
+    .toolbar {
+      background: white;
+      border-bottom: 1px solid #dee2e6;
+      padding: 0.75rem 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .toolbar button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .toolbar button:hover {
+      background: #f8f9fa;
+    }
+    .toolbar select {
+      padding: 0.5rem;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+    #cy {
+      width: 100%;
+      height: calc(100vh - 120px);
+      background: white;
+    }
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #6c757d;
+    }
+    .error {
+      color: #dc3545;
+      padding: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Entscape</h1>
+    <span class="subtitle">Entity-Relationship Diagram</span>
+  </header>
+  <div class="toolbar">
+    <button id="fit-btn">Fit View</button>
+    <button id="reset-btn">Reset</button>
+    <label>
+      Layout:
+      <select id="direction-select">
+        <option value="TB">Top to Bottom</option>
+        <option value="LR">Left to Right</option>
+      </select>
+    </label>
+  </div>
+  <div id="cy">
+    <div class="loading">Loading schema...</div>
+  </div>
+
+  <!-- Cytoscape.js from CDN -->
+  <script src="https://unpkg.com/cytoscape@3.30.0/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+
+  <!-- Entscape UMD bundle -->
+  <script src="./dist/entscape.umd.js"></script>
+
+  <script>
+    // Register dagre layout
+    cytoscape.use(cytoscapeDagre);
+
+    const container = document.getElementById('cy');
+    let instance = null;
+
+    // Fetch schema from API
+    async function loadSchema() {
+      try {
+        const response = await fetch('/api/schema.json');
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const schema = await response.json();
+        return schema;
+      } catch (error) {
+        container.innerHTML = `<div class="error">Failed to load schema: ${error.message}</div>`;
+        throw error;
+      }
+    }
+
+    // Initialize the visualization
+    async function init() {
+      const schema = await loadSchema();
+      container.innerHTML = '';
+
+      instance = entscape.render(container, schema, {
+        direction: 'TB',
+        onEntityClick: (entity) => {
+          if (entity.path) {
+            window.open(entity.path, '_blank');
+          } else {
+            console.log('Entity clicked:', entity);
+          }
+        },
+      });
+    }
+
+    // Toolbar handlers
+    document.getElementById('fit-btn').addEventListener('click', () => {
+      if (instance) instance.fit();
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      if (instance) {
+        instance.clearHighlight();
+        instance.fit();
+      }
+    });
+
+    document.getElementById('direction-select').addEventListener('change', async (e) => {
+      if (instance) {
+        instance.destroy();
+      }
+      const schema = await loadSchema();
+      container.innerHTML = '';
+      instance = entscape.render(container, schema, {
+        direction: e.target.value,
+      });
+    });
+
+    // Start
+    init().catch(console.error);
+  </script>
+</body>
+</html>
