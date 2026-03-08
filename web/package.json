@@ -1,0 +1,54 @@
+{
+  "name": "@grokify/entscape",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Interactive Ent.go schema visualization using Cytoscape.js",
+  "main": "dist/entscape.umd.js",
+  "module": "dist/entscape.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ent",
+    "entgo",
+    "erd",
+    "entity-relationship",
+    "diagram",
+    "visualization",
+    "cytoscape"
+  ],
+  "author": "John Wang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grokify/entscape.git"
+  },
+  "bugs": {
+    "url": "https://github.com/grokify/entscape/issues"
+  },
+  "homepage": "https://github.com/grokify/entscape#readme",
+  "peerDependencies": {
+    "cytoscape": "^3.28.0"
+  },
+  "dependencies": {
+    "cytoscape-dagre": "^2.5.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "@types/cytoscape": "^3.21.0",
+    "cytoscape": "^3.30.0",
+    "rollup": "^4.30.0",
+    "tslib": "^2.8.0",
+    "typescript": "^5.7.0"
+  }
+}
