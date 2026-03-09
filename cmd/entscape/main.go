@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/grokify/entscape/export"
 	"github.com/grokify/entscape/htmlgen"
@@ -288,7 +289,11 @@ func runServe(cmd *cobra.Command, args []string) error {
 	fmt.Printf("\nServing schema from: %s\n", absDir)
 	fmt.Println("Press Ctrl+C to stop")
 
-	return http.ListenAndServe(addr, nil)
+	server := &http.Server{
+		Addr:              addr,
+		ReadHeaderTimeout: 10 * time.Second,
+	}
+	return server.ListenAndServe()
 }
 
 func runGenerate(cmd *cobra.Command, args []string) error {

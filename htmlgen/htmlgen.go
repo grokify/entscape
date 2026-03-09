@@ -53,10 +53,12 @@ func Generate(s *schema.Schema, opts Options) ([]byte, error) {
 	}
 
 	// Execute template
+	// SchemaJSON contains trusted data from internal schema parsing, not user input.
+	// #nosec G203 -- schemaBytes is JSON-marshaled from our own schema.Schema struct
 	data := TemplateData{
 		Title:      opts.Title,
 		SourceURL:  opts.SourceURL,
-		SchemaJSON: template.JS(schemaBytes),
+		SchemaJSON: template.JS(schemaBytes), //nolint:gosec // trusted internal data
 	}
 
 	var buf bytes.Buffer
