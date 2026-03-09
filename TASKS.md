@@ -128,14 +128,15 @@ Link to Go documentation:
 - [ ] Support pkgsite self-hosted instances
 
 ### 2.4 GitHub Pages Deployment
-**Status**: Not Started
+**Status**: Complete
 
 Easy deployment workflow:
 
-- [ ] Generate to `docs/` folder by default
-- [ ] GitHub Action for auto-regeneration on schema changes
-- [ ] Example workflow YAML
-- [ ] Documentation for setup
+- [x] MkDocs site with Material theme
+- [x] Documentation pages (getting started, CLI reference, schema docs)
+- [x] Interactive ERD demo embedded in docs
+- [x] Deploy via `mkdocs gh-deploy` to gh-pages branch
+- [x] Example workflow in getting-started.md
 
 ## Phase 3: Enhanced Features
 
