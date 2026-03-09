@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sample Schema</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #212529;
+    }
+    header {
+      background: #212529;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    header .subtitle {
+      color: #adb5bd;
+      font-size: 0.875rem;
+    }
+    .header-right a {
+      color: #adb5bd;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    .header-right a:hover {
+      color: white;
+    }
+    .toolbar {
+      background: white;
+      border-bottom: 1px solid #dee2e6;
+      padding: 0.75rem 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .toolbar button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.15s;
+    }
+    .toolbar button:hover {
+      background: #e9ecef;
+      border-color: #adb5bd;
+    }
+    .toolbar select {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      background: white;
+    }
+    .toolbar label {
+      font-size: 0.875rem;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .toolbar .spacer {
+      flex: 1;
+    }
+    .toolbar .entity-count {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+    #cy {
+      width: 100%;
+      height: calc(100vh - 120px);
+      background: white;
+    }
+    .tooltip {
+      position: absolute;
+      background: #212529;
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      pointer-events: none;
+      z-index: 1000;
+      max-width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .tooltip .fields {
+      margin-top: 0.5rem;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>Sample Schema</h1>
+      <span class="subtitle">Entity-Relationship Diagram</span>
+    </div>
+    <div class="header-right">
+      <a href="https://github.com/grokify/entscape" target="_blank">View Source</a>
+    </div>
+  </header>
+  <div class="toolbar">
+    <button id="fit-btn" title="Fit diagram to view">Fit View</button>
+    <button id="reset-btn" title="Clear highlights and reset view">Reset</button>
+    <label>
+      Layout:
+      <select id="direction-select">
+        <option value="TB">Top to Bottom</option>
+        <option value="LR">Left to Right</option>
+      </select>
+    </label>
+    <div class="spacer"></div>
+    <span class="entity-count" id="entity-count"></span>
+  </div>
+  <div id="cy"></div>
+  <div class="tooltip" id="tooltip" style="display: none;"></div>
+
+  <script src="https://unpkg.com/cytoscape@3.30.0/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+
+  <script>
+    
+    const schema = {"version":"1","package":{"name":"","source":"https://github.com/grokify/entscape","branch":"main"},"entities":[{"name":"Comment","path":"https://github.com/grokify/entscape/blob/main/ent/schema/comment.go","description":"Comment holds the schema definition for the Comment entity.","fields":[{"name":"id","type":"int"},{"name":"content","type":"string","attrs":["required"]},{"name":"created_at","type":"time.Time","attrs":["immutable"]}],"edges":[{"name":"post","target":"Post","relation":"M2O","inverse":"comments","required":true,"unique":true}]},{"name":"Group","path":"https://github.com/grokify/entscape/blob/main/ent/schema/group.go","description":"Group holds the schema definition for the Group entity.","fields":[{"name":"id","type":"int"},{"name":"name","type":"string","attrs":["required"]},{"name":"description","type":"string","attrs":["optional"]}],"edges":[{"name":"members","target":"User","relation":"M2M"}]},{"name":"Post","path":"https://github.com/grokify/entscape/blob/main/ent/schema/post.go","description":"Post holds the schema definition for the Post entity.","fields":[{"name":"id","type":"int"},{"name":"title","type":"string","attrs":["required"]},{"name":"content","type":"string","attrs":["optional"]},{"name":"published_at","type":"time.Time","attrs":["nillable","optional"]}],"edges":[{"name":"author","target":"User","relation":"M2O","inverse":"posts","required":true,"unique":true},{"name":"comments","target":"Comment","relation":"O2M"}]},{"name":"Profile","path":"https://github.com/grokify/entscape/blob/main/ent/schema/profile.go","description":"Profile holds the schema definition for the Profile entity.","fields":[{"name":"id","type":"int"},{"name":"bio","type":"string","attrs":["optional"]},{"name":"avatar_url","type":"string","attrs":["optional"]}],"edges":[{"name":"user","target":"User","relation":"M2O","inverse":"profile","required":true,"unique":true}]},{"name":"User","path":"https://github.com/grokify/entscape/blob/main/ent/schema/user.go","description":"User holds the schema definition for the User entity.","fields":[{"name":"id","type":"int"},{"name":"email","type":"string","attrs":["required","unique"]},{"name":"name","type":"string","attrs":["optional"]},{"name":"created_at","type":"time.Time","attrs":["default","immutable"]}],"edges":[{"name":"posts","target":"Post","relation":"O2M"},{"name":"profile","target":"Profile","relation":"O2O","unique":true},{"name":"groups","target":"Group","relation":"M2M","inverse":"members"}],"indexes":[{"fields":["email"]}]}]};
+
+    
+    cytoscape.use(cytoscapeDagre);
+
+    
+    const relationLabels = {
+      'O2O': '1:1',
+      'O2M': '1:N',
+      'M2O': 'N:1',
+      'M2M': 'M:N'
+    };
+
+    
+    function formatField(field) {
+      const attrs = field.attrs || [];
+      const markers = [];
+      if (attrs.includes('primary')) markers.push('PK');
+      if (attrs.includes('unique')) markers.push('U');
+      if (attrs.includes('required')) markers.push('*');
+      const markerStr = markers.length > 0 ? ' [' + markers.join(',') + ']' : '';
+      return field.name + ': ' + field.type + markerStr;
+    }
+
+    
+    function calculateNodeHeight(entity) {
+      const baseHeight = 50;
+      const fieldHeight = 18;
+      const fieldCount = (entity.fields || []).length;
+      return baseHeight + fieldCount * fieldHeight;
+    }
+
+    
+    function schemaToElements(schema) {
+      const elements = [];
+      const entityMap = new Map();
+
+      for (const entity of schema.entities) {
+        entityMap.set(entity.name, entity);
+      }
+
+      
+      for (const entity of schema.entities) {
+        elements.push({
+          data: {
+            id: entity.name,
+            label: entity.name,
+            height: calculateNodeHeight(entity),
+            entity: entity,
+            path: entity.path || null
+          }
+        });
+      }
+
+      
+      const edgeSet = new Set();
+      for (const entity of schema.entities) {
+        if (!entity.edges) continue;
+        for (const edge of entity.edges) {
+          if (!entityMap.has(edge.target)) continue;
+          const edgeId = entity.name + '-' + edge.name + '-' + edge.target;
+          const reverseId = edge.target + '-' + (edge.inverse || '') + '-' + entity.name;
+          if (edgeSet.has(reverseId)) continue;
+          edgeSet.add(edgeId);
+          elements.push({
+            data: {
+              id: edgeId,
+              source: entity.name,
+              target: edge.target,
+              label: relationLabels[edge.relation] || edge.relation,
+              relation: edge.relation,
+              required: edge.required || false
+            }
+          });
+        }
+      }
+
+      return elements;
+    }
+
+    
+    const style = [
+      {
+        selector: 'node',
+        style: {
+          'background-color': '#f8f9fa',
+          'border-color': '#dee2e6',
+          'border-width': 1,
+          'border-style': 'solid',
+          'label': 'data(label)',
+          'text-valign': 'top',
+          'text-halign': 'center',
+          'text-margin-y': 8,
+          'font-family': 'system-ui, -apple-system, sans-serif',
+          'font-size': 14,
+          'font-weight': 'bold',
+          'color': '#212529',
+          'shape': 'round-rectangle',
+          'width': 'label',
+          'height': 'data(height)',
+          'padding-top': '30px',
+          'padding-bottom': '10px',
+          'padding-left': '15px',
+          'padding-right': '15px'
+        }
+      },
+      {
+        selector: 'node.highlighted',
+        style: {
+          'background-color': '#cfe2ff',
+          'border-color': '#0d6efd',
+          'border-width': 2
+        }
+      },
+      {
+        selector: 'edge',
+        style: {
+          'width': 2,
+          'line-color': '#6c757d',
+          'target-arrow-color': '#6c757d',
+          'target-arrow-shape': 'triangle',
+          'curve-style': 'bezier',
+          'label': 'data(label)',
+          'font-family': 'system-ui, -apple-system, sans-serif',
+          'font-size': 11,
+          'color': '#495057',
+          'text-background-color': '#ffffff',
+          'text-background-opacity': 0.9,
+          'text-background-padding': '3px',
+          'text-rotation': 'autorotate'
+        }
+      },
+      {
+        selector: 'edge.highlighted',
+        style: {
+          'line-color': '#0d6efd',
+          'target-arrow-color': '#0d6efd',
+          'width': 3
+        }
+      },
+      {
+        selector: 'edge[relation = "M2M"]',
+        style: {
+          'source-arrow-shape': 'triangle',
+          'source-arrow-color': '#6c757d'
+        }
+      }
+    ];
+
+    
+    let cy = null;
+    let currentDirection = 'TB';
+
+    function initCytoscape(direction) {
+      currentDirection = direction;
+      const container = document.getElementById('cy');
+
+      if (cy) {
+        cy.destroy();
+      }
+
+      cy = cytoscape({
+        container: container,
+        elements: schemaToElements(schema),
+        style: style,
+        layout: {
+          name: 'dagre',
+          rankDir: direction,
+          nodeSep: 80,
+          rankSep: 100,
+          edgeSep: 50,
+          padding: 30
+        },
+        minZoom: 0.1,
+        maxZoom: 3,
+        wheelSensitivity: 0.3
+      });
+
+      
+      cy.on('tap', 'node', function(evt) {
+        const node = evt.target;
+        const path = node.data('path');
+        if (path) {
+          window.open(path, '_blank');
+        }
+      });
+
+      
+      cy.on('mouseover', 'node', function(evt) {
+        const node = evt.target;
+        node.addClass('highlighted');
+        node.connectedEdges().addClass('highlighted');
+        node.neighborhood('node').addClass('highlighted');
+
+        
+        const entity = node.data('entity');
+        if (entity && entity.fields && entity.fields.length > 0) {
+          const tooltip = document.getElementById('tooltip');
+          const fields = entity.fields.map(formatField).join('\n');
+          tooltip.innerHTML = '<strong>' + entity.name + '</strong><div class="fields">' + fields.replace(/\n/g, '<br>') + '</div>';
+          tooltip.style.display = 'block';
+        }
+      });
+
+      cy.on('mouseout', 'node', function(evt) {
+        cy.elements().removeClass('highlighted');
+        document.getElementById('tooltip').style.display = 'none';
+      });
+
+      
+      cy.on('mousemove', function(evt) {
+        const tooltip = document.getElementById('tooltip');
+        if (tooltip.style.display === 'block') {
+          tooltip.style.left = (evt.originalEvent.clientX + 15) + 'px';
+          tooltip.style.top = (evt.originalEvent.clientY + 15) + 'px';
+        }
+      });
+
+      
+      document.getElementById('entity-count').textContent = schema.entities.length + ' entities';
+    }
+
+    
+    document.getElementById('fit-btn').addEventListener('click', function() {
+      if (cy) cy.fit(undefined, 30);
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', function() {
+      if (cy) {
+        cy.elements().removeClass('highlighted');
+        cy.fit(undefined, 30);
+      }
+    });
+
+    document.getElementById('direction-select').addEventListener('change', function(e) {
+      initCytoscape(e.target.value);
+    });
+
+    
+    initCytoscape('TB');
+  </script>
+</body>
+</html>
