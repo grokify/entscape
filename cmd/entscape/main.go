@@ -153,7 +153,7 @@ func runHtml(cmd *cobra.Command, args []string) error {
 
 	// Write output
 	if htmlOutputFlag != "" {
-		if err := os.WriteFile(htmlOutputFlag, html, 0644); err != nil {
+		if err := os.WriteFile(htmlOutputFlag, html, 0600); err != nil {
 			return fmt.Errorf("writing output: %w", err)
 		}
 		fmt.Fprintf(os.Stderr, "Wrote HTML to %s (%d entities)\n", htmlOutputFlag, len(s.Entities))
@@ -178,7 +178,7 @@ func runSchema(cmd *cobra.Command, args []string) error {
 	}
 
 	if schemaOutputFlag != "" {
-		if err := os.WriteFile(schemaOutputFlag, data, 0644); err != nil {
+		if err := os.WriteFile(schemaOutputFlag, data, 0600); err != nil {
 			return fmt.Errorf("writing schema: %w", err)
 		}
 		fmt.Fprintf(os.Stderr, "Wrote JSON Schema to %s\n", schemaOutputFlag)
@@ -317,7 +317,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 
 	// Write output
 	if outputFlag != "" {
-		if err := os.WriteFile(outputFlag, data, 0644); err != nil {
+		if err := os.WriteFile(outputFlag, data, 0600); err != nil {
 			return fmt.Errorf("writing output: %w", err)
 		}
 		fmt.Fprintf(os.Stderr, "Wrote %d entities to %s\n", len(schema.Entities), outputFlag)

@@ -12,10 +12,10 @@ import (
 
 // Options configures the export behavior.
 type Options struct {
-	RepoURL  string // Repository URL (e.g., https://github.com/org/repo)
-	Branch   string // Git branch for source links
-	DocsURL  string // Documentation base URL
-	Indent   bool   // Pretty-print JSON
+	RepoURL string // Repository URL (e.g., https://github.com/org/repo)
+	Branch  string // Git branch for source links
+	DocsURL string // Documentation base URL
+	Indent  bool   // Pretty-print JSON
 }
 
 // Exporter exports schemas to JSON.
@@ -62,7 +62,7 @@ func (e *Exporter) ExportToFile(s *schema.Schema, path string) error {
 		return fmt.Errorf("marshaling schema: %w", err)
 	}
 
-	if err := os.WriteFile(path, data, 0644); err != nil {
+	if err := os.WriteFile(path, data, 0600); err != nil {
 		return fmt.Errorf("writing file: %w", err)
 	}
 
