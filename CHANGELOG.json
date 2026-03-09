@@ -1,0 +1,61 @@
+{
+  "irVersion": "1.0",
+  "project": "entscape",
+  "repository": "https://github.com/grokify/entscape",
+  "versioning": "semver",
+  "commitConvention": "conventional",
+  "maintainers": ["grokify"],
+  "releases": [
+    {
+      "version": "v0.1.0",
+      "date": "2026-03-09",
+      "highlights": [
+        { "description": "Interactive entity-relationship diagram visualization for Ent.go schemas" },
+        { "description": "Generate standalone HTML files deployable to GitHub Pages" },
+        { "description": "NPM module with Cytoscape.js for custom integrations" }
+      ],
+      "added": [
+        { "description": "JSON schema types for entscape format with Go types and JSON Schema generation", "commit": "9d80af5" },
+        { "description": "AST-based Ent schema parser extracting entities, fields, edges, indexes, and mixins", "commit": "04337d9" },
+        { "description": "JSON exporter with source links for GitHub, GitLab, and Bitbucket", "commit": "958a309" },
+        { "description": "Public `AddSourceLinks` method for HTML generator", "commit": "1d2ca4d" },
+        { "description": "`entscape generate` command to parse Ent schema and export JSON", "commit": "9208657" },
+        { "description": "`entscape serve` command with local development server and hot-reload", "commit": "9208657" },
+        { "description": "`entscape schema` command to generate JSON Schema document", "commit": "9208657" },
+        { "description": "`entscape html` command for standalone HTML visualization output", "commit": "73eab96" },
+        { "description": "`--web` flag for serve command to serve static files", "commit": "724a20b" },
+        { "description": "HTML generation package with embedded Cytoscape.js template", "commit": "3c4bb01" },
+        { "description": "NPM module (`@grokify/entscape`) with TypeScript types and Cytoscape.js renderer", "commit": "be4f906" },
+        { "description": "Dagre layout for hierarchical ER diagram visualization", "commit": "be4f906" },
+        { "description": "Interactive features: hover tooltips, entity click handlers, highlight connected nodes", "commit": "be4f906" },
+        { "description": "Example HTML for testing renderer with development server", "commit": "4ec8be1" }
+      ],
+      "fixed": [
+        { "description": "Address golangci-lint gosec warnings for HTTP timeouts and template.JS", "commit": "49ee285" }
+      ],
+      "tests": [
+        { "description": "Schema unit tests for JSON round-tripping and constants", "commit": "d14b624" },
+        { "description": "Parser tests with 5-entity sample schema (User, Post, Profile, Comment, Group)", "commit": "8d96d0a" },
+        { "description": "Export unit tests for JSON marshaling and URL generation", "commit": "6b88d46" }
+      ],
+      "documentation": [
+        { "description": "README with installation, usage examples, and features", "commit": "a80f601" },
+        { "description": "MkDocs site with Material theme for documentation", "commit": "c21cd9d" },
+        { "description": "Documentation pages: getting started, CLI reference, JSON schema, demo", "commit": "9139595" },
+        { "description": "Interactive ERD demo embedded in documentation", "commit": "9139595" },
+        { "description": "README badges for Go version, license, and documentation", "commit": "3aab023" }
+      ],
+      "build": [
+        { "description": "Initial project setup with Go module and dependencies", "commit": "5970814" },
+        { "description": "MkDocs configuration with Material theme", "commit": "c21cd9d" },
+        { "description": "GitHub Actions shared CI/CD pipelines", "commit": "cc65a8d" },
+        { "description": "Gitignore for build outputs and IDE files", "commit": "94ba0fd" }
+      ],
+      "dependencies": [
+        { "description": "Add `github.com/invopop/jsonschema` for JSON Schema generation", "commit": "5970814" },
+        { "description": "Add `github.com/spf13/cobra` for CLI framework", "commit": "5970814" },
+        { "description": "Update Go module dependencies", "commit": "71c3664" }
+      ]
+    }
+  ]
+}

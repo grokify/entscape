@@ -1,0 +1,111 @@
+# Release Notes - v0.1.0
+
+**Release Date:** 2026-03-09
+
+## Overview
+
+Entscape v0.1.0 is the initial release, providing interactive entity-relationship diagram visualization for [Ent.go](https://entgo.io) schemas. Generate standalone HTML files deployable to GitHub Pages, or integrate the NPM module for custom visualizations.
+
+## Highlights
+
+- **Interactive ERD Visualization** - Explore your Ent schema with Cytoscape.js-powered diagrams
+- **Standalone HTML Generation** - Create single-file visualizations deployable anywhere
+- **NPM Module** - TypeScript types and renderer for custom integrations
+- **Source Code Links** - Click entities to jump to source on GitHub/GitLab/Bitbucket
+
+## Installation
+
+### Go CLI
+
+```bash
+go install github.com/grokify/entscape/cmd/entscape@v0.1.0
+```
+
+### NPM Module
+
+```bash
+npm install @grokify/entscape
+```
+
+## Quick Start
+
+### Generate HTML Visualization
+
+```bash
+# Basic usage
+entscape html ./ent/schema -o index.html
+
+# With source links
+entscape html ./ent/schema \
+  -o index.html \
+  --repo https://github.com/your-org/your-repo \
+  --title "My Schema"
+```
+
+### Export JSON
+
+```bash
+entscape generate ./ent/schema -o schema.json
+```
+
+### Development Server
+
+```bash
+entscape serve ./ent/schema --port 8080
+```
+
+## Features
+
+### CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `entscape html` | Generate standalone HTML visualization |
+| `entscape generate` | Export schema as JSON |
+| `entscape serve` | Start development server |
+| `entscape schema` | Generate JSON Schema document |
+
+### NPM Module
+
+```javascript
+import { render } from '@grokify/entscape';
+
+const instance = render('#container', schema, {
+  direction: 'TB',
+  onEntityClick: (entity) => window.open(entity.path)
+});
+
+instance.fit();
+instance.highlight('User');
+```
+
+### Visualization Features
+
+- **Dagre Layout** - Hierarchical ER diagram layout
+- **Hover Tooltips** - View entity fields on hover
+- **Click Handlers** - Open source files on click
+- **Highlighting** - Highlight connected entities
+- **Zoom Controls** - Fit view and zoom to entity
+
+## Documentation
+
+- **Getting Started**: https://grokify.github.io/entscape/getting-started/
+- **CLI Reference**: https://grokify.github.io/entscape/cli/
+- **JSON Schema**: https://grokify.github.io/entscape/schema/
+- **Live Demo**: https://grokify.github.io/entscape/demo/
+
+## Dependencies
+
+- Go 1.21+
+- `github.com/spf13/cobra` - CLI framework
+- `github.com/invopop/jsonschema` - JSON Schema generation
+
+## License
+
+MIT License - see [LICENSE](https://github.com/grokify/entscape/blob/main/LICENSE)
+
+## Links
+
+- **Repository**: https://github.com/grokify/entscape
+- **Documentation**: https://grokify.github.io/entscape
+- **Issues**: https://github.com/grokify/entscape/issues
