@@ -69,6 +69,21 @@ func (e *Exporter) ExportToFile(s *schema.Schema, path string) error {
 	return nil
 }
 
+// AddSourceLinks adds source URLs to entity paths and returns the modified schema.
+func (e *Exporter) AddSourceLinks(s *schema.Schema) *schema.Schema {
+	// Add package metadata
+	if e.opts.RepoURL != "" {
+		if s.Package == nil {
+			s.Package = &schema.Package{}
+		}
+		s.Package.Source = e.opts.RepoURL
+		s.Package.Branch = e.opts.Branch
+	}
+
+	e.addSourceLinks(s)
+	return s
+}
+
 // addSourceLinks adds source URLs to entity paths.
 func (e *Exporter) addSourceLinks(s *schema.Schema) {
 	for i := range s.Entities {
