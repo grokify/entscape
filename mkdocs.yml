@@ -33,6 +33,8 @@ nav:
   - CLI Reference: cli.md
   - JSON Schema: schema.md
   - Demo: demo.md
+  - Releases:
+    - v0.1.0: releases/v0.1.0.md
 
 markdown_extensions:
   - admonition
