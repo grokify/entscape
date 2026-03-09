@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/grokify/entscape/export"
+	"github.com/grokify/entscape/htmlgen"
 	"github.com/grokify/entscape/parser"
 	"github.com/grokify/entscape/schema"
 	"github.com/spf13/cobra"
@@ -58,10 +59,18 @@ var (
 	serveWebFlag    string
 )
 
+var (
+	htmlOutputFlag string
+	htmlRepoFlag   string
+	htmlBranchFlag string
+	htmlTitleFlag  string
+)
+
 func init() {
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.AddCommand(schemaCmd)
 	rootCmd.AddCommand(serveCmd)
+	rootCmd.AddCommand(htmlCmd)
 	rootCmd.AddCommand(versionCmd)
 
 	generateCmd.Flags().StringVarP(&outputFlag, "output", "o", "", "Output file (default: stdout)")
@@ -77,6 +86,11 @@ func init() {
 	serveCmd.Flags().StringVar(&serveBranchFlag, "branch", "main", "Git branch for source links")
 	serveCmd.Flags().StringVar(&serveDocsFlag, "docs", "", "Documentation base URL")
 	serveCmd.Flags().StringVar(&serveWebFlag, "web", "", "Web directory to serve static files from")
+
+	htmlCmd.Flags().StringVarP(&htmlOutputFlag, "output", "o", "", "Output file (default: stdout)")
+	htmlCmd.Flags().StringVar(&htmlRepoFlag, "repo", "", "Repository URL for source links")
+	htmlCmd.Flags().StringVar(&htmlBranchFlag, "branch", "main", "Git branch for source links")
+	htmlCmd.Flags().StringVar(&htmlTitleFlag, "title", "", "Page title (default: package name or 'Entscape')")
 }
 
 var versionCmd = &cobra.Command{
@@ -88,6 +102,67 @@ var versionCmd = &cobra.Command{
 }
 
 var schemaOutputFlag string
+
+var htmlCmd = &cobra.Command{
+	Use:   "html [schema-dir]",
+	Short: "Generate standalone HTML visualization",
+	Long: `Generate a standalone HTML file with embedded schema data for visualization.
+
+The generated HTML file can be opened directly in a browser or deployed to
+GitHub Pages or any static hosting service.
+
+Example:
+  entscape html ./ent/schema --output index.html --repo https://github.com/org/repo`,
+	Args: cobra.ExactArgs(1),
+	RunE: runHtml,
+}
+
+func runHtml(cmd *cobra.Command, args []string) error {
+	schemaDir := args[0]
+
+	// Parse the Ent schema directory
+	p := parser.New()
+	s, err := p.ParseDir(schemaDir)
+	if err != nil {
+		return fmt.Errorf("parsing schema: %w", err)
+	}
+
+	// Add source links if repo is specified
+	if htmlRepoFlag != "" {
+		exp := export.New(export.Options{
+			RepoURL: htmlRepoFlag,
+			Branch:  htmlBranchFlag,
+		})
+		s = exp.AddSourceLinks(s)
+	}
+
+	// Determine title
+	title := htmlTitleFlag
+	if title == "" && s.Package != nil && s.Package.Name != "" {
+		title = s.Package.Name
+	}
+
+	// Generate HTML
+	html, err := htmlgen.Generate(s, htmlgen.Options{
+		Title:     title,
+		SourceURL: htmlRepoFlag,
+	})
+	if err != nil {
+		return fmt.Errorf("generating HTML: %w", err)
+	}
+
+	// Write output
+	if htmlOutputFlag != "" {
+		if err := os.WriteFile(htmlOutputFlag, html, 0644); err != nil {
+			return fmt.Errorf("writing output: %w", err)
+		}
+		fmt.Fprintf(os.Stderr, "Wrote HTML to %s (%d entities)\n", htmlOutputFlag, len(s.Entities))
+	} else {
+		fmt.Print(string(html))
+	}
+
+	return nil
+}
 
 var schemaCmd = &cobra.Command{
 	Use:   "schema",
