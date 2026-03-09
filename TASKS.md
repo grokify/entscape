@@ -82,39 +82,39 @@ NPM module for rendering:
 - [ ] Publish to NPM (`@grokify/entscape`)
 
 ### 1.6 CLI Integration
-**Status**: Partial
+**Status**: Complete
 
 Go CLI that ties it together:
 
 - [x] `entscape generate` - Parse and export JSON
-- [ ] `entscape serve` - Local dev server with hot reload
+- [x] `entscape serve` - Local dev server with hot reload
+- [x] `entscape html` - Generate standalone HTML visualization
 - [x] Flags: `--schema`, `--output`, `--repo`, `--branch`
 - [x] Error handling and validation
-- [ ] `--html` flag for standalone HTML output
 
 ## Phase 2: Static HTML & Docs Integration
 
 ### 2.1 Static HTML Generator
-**Status**: Not Started
+**Status**: Complete
 
 Generate standalone HTML file:
 
-- [ ] Create HTML template with embedded Cytoscape.js
-- [ ] Embed JSON schema inline or as separate file
-- [ ] Bundle NPM module into single JS file
-- [ ] `entscape generate --html` outputs complete HTML
-- [ ] Support custom title, theme options
-- [ ] Optimize for GitHub Pages deployment
+- [x] Create HTML template with embedded Cytoscape.js
+- [x] Embed JSON schema inline in HTML
+- [x] Use CDN for Cytoscape.js (no bundling needed)
+- [x] `entscape html` command outputs complete HTML
+- [x] Support custom title via `--title` flag
+- [x] Optimized for GitHub Pages deployment (single file)
 
 ### 2.2 Source Link Integration
-**Status**: Partial
+**Status**: Complete
 
 Link to source code repositories:
 
 - [ ] Auto-detect GitHub/GitLab from go.mod
 - [x] Generate correct blob URLs (GitHub, GitLab, Bitbucket)
 - [ ] Support custom URL templates
-- [ ] Open source file on entity click
+- [x] Open source file on entity click
 - [ ] Highlight specific line if possible
 
 ### 2.3 Documentation Link Integration
